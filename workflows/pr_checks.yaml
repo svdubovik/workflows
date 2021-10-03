@@ -1,0 +1,43 @@
+name: Pull Request checks
+
+on:
+  workflow_call:
+    inputs:
+      python_version:
+        default: "3.8"
+        required: false
+        type: string
+      flake8_workdir:
+        default: "."
+        required: false
+        type: string
+    secrets:
+      token:
+        required: true
+
+jobs:
+  flake8:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ inputs.python_version }}
+      - uses: reviewdog/action-flake8@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          flake8_args: --config=.flake8 gulfstream
+          reporter: github-pr-review
+          workdir: ${{ inputs.flake8_workdir }}
+          fail_on_error: true
+
+  bandit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ inputs.python_version }}
+      - uses: mdegis/bandit-action@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
