@@ -11,6 +11,9 @@ on:
         default: "."
         required: false
         type: string
+    secrets:
+      GITHUB_TOKEN:
+        required: true
 
 jobs:
   flake8:
@@ -22,7 +25,7 @@ jobs:
           python-version: ${{ inputs.python_version }}
       - uses: reviewdog/action-flake8@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ inputs.secrets.GITHUB_TOKEN }}
           flake8_args: --config=.flake8 gulfstream
           reporter: github-pr-review
           workdir: ${{ inputs.flake8_workdir }}
@@ -35,6 +38,6 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ inputs.python_version }}
-      - uses: mdegis/bandit-action@v1
+      - uses: mdegis/bandit-action@v1.0
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ inputs.secrets.GITHUB_TOKEN }}
